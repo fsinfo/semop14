@@ -4,14 +4,42 @@
 void spi_init(void) {
 	// Set MOSI and SCK output, all others input
 	DDRB = (1<<PB3) | (1<<PB5) | (1<<PB2);
-	// Enable SPI, Master, Clockrate fck/4, LSB first
-	SPCR = (1<<SPE) | (1<<MSTR) | (1<<CPOL) | (1<<SPR0)| (1 << DORD);
-	// double spi speed for fck/2
+	// Enable SPI, Enable Interrupt, Clockspeed fck/16, Master
+	SPCR = (1<<SPE) | (1 << SPIE) | (1<<SPR0) | (1<<MSTR);
+	// double spi speed for fck/8
 	SPSR |= (1 << SPI2X);
 }
 
+void spi_start_frame(void) {
+	if(output_state == 0 || output_state == 2) {
+		switch(output_state) {
+		case 0:
+			SPDR = buffer1.data[0];
+			break;
+		case 2:
+			SPDR = buffer2.data[0];
+			break;
+		}
+		output_pos = 1;
+	}
+}
 
-void spi_write_byte(uint8_t data) {
-	SPDR = data;
-	while(!(SPSR & (1<<SPIF)));
+
+ISR(SPI_STC_vect) {
+	if(output_state == 0 || output_state == 2) {
+		if(output_pos < 300) {
+			switch(output_state) {
+			case 0:
+				SPDR = buffer1.data[output_pos];
+				break;
+			case 2:
+				SPDR = buffer2.data[output_pos];
+				break;
+			}
+			output_pos++;
+		}
+		else {
+			output_state++;
+		}
+	}
 }

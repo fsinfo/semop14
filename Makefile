@@ -2,7 +2,7 @@ AVRMCU = atmega8
 F_CPU = 16000000
 ISPPORT = /dev/ttyUSB0
 
-SRC = main.c include/spi.c
+SRC = main.c include/spi.c include/animation.c include/rgbhsv.c
 TARGET = firmware-$(AVRMCU)
 OBJDIR = bin/$(AVRMCU)
 
