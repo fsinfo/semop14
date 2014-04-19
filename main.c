@@ -6,16 +6,11 @@
 #include "include/rgbhsv.h"
 #include "include/animation.h"
 
-struct hsv_colour source[100];
+struct hsv_colour source[LED_COUNT];
 union rgb_buffer buffer1, buffer2;
 
-// Output state:
-// 0: Started, output buffer 1
-// 1: Wait for renderer to be rendering
-// 2: output buffer 2
-// 3: Wait for renderer to be rendering
-volatile uint8_t output_state = 1;
-uint16_t output_pos = 0; // 0 to 299
+volatile enum output_state_t output_state = FINISHED_BUFFER1;
+volatile uint16_t output_pos = 0; // 0 to 299
 
 void sleep_us(uint16_t timeout) {
 	while(timeout > 0) {
@@ -27,33 +22,31 @@ void sleep_us(uint16_t timeout) {
 void renderer(void) {
 	uint16_t i = 0;
 
-	//anim_frame(source, 100);
-
 	while(true) {
 		
-		anim_frame(source, 100);
+		anim_frame(source);
 		
-		for(i = 0; i < 100; i++)
-			inp_hsv2rgb(source + i, buffer1.rgb + i);
-		
-
-
-		while(output_state != 1) {}
-		sleep_us(500);
-		output_state = 2;
-		spi_start_frame();
-		
-		
-		anim_frame(source, 100);
-		
-		for(i = 0; i < 100; i++)
+		for(i = 0; i < LED_COUNT; i++)
 			inp_hsv2rgb(source + i, buffer2.rgb + i);
 		
 
-
-		while(output_state != 3) {}
+		while(output_state != FINISHED_BUFFER1) {}
+		//Output buffer2, render into buffer1
 		sleep_us(500);
-		output_state = 0;
+		output_state = OUTPUT_BUFFER2;
+		spi_start_frame();
+		
+		
+		anim_frame(source);
+		
+		for(i = 0; i < LED_COUNT; i++)
+			inp_hsv2rgb(source + i, buffer1.rgb + i);
+		
+
+		while(output_state != FINISHED_BUFFER2) {}
+		//Output buffer1, render into buffer2
+		sleep_us(500);
+		output_state = OUTPUT_BUFFER1;
 		spi_start_frame();
 	}
 }

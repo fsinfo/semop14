@@ -19,6 +19,8 @@ void spi_start_frame(void) {
 		case 2:
 			SPDR = buffer2.data[0];
 			break;
+		default:
+			break;
 		}
 		output_pos = 1;
 	}
@@ -27,13 +29,15 @@ void spi_start_frame(void) {
 
 ISR(SPI_STC_vect) {
 	if(output_state == 0 || output_state == 2) {
-		if(output_pos < 300) {
+		if(output_pos < LED_COUNT*3) {
 			switch(output_state) {
 			case 0:
 				SPDR = buffer1.data[output_pos];
 				break;
 			case 2:
 				SPDR = buffer2.data[output_pos];
+				break;
+			default:
 				break;
 			}
 			output_pos++;

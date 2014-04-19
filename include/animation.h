@@ -3,6 +3,8 @@
 
 #include "rgbhsv.h"
 
-void anim_frame(struct hsv_colour frame[], uint16_t length);
+#define LED_COUNT 100
+
+void anim_frame(struct hsv_colour frame[]);
 
 #endif /* ANIMATION_H */
