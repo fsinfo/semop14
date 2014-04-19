@@ -11,7 +11,7 @@ void spi_init(void) {
 }
 
 void spi_start_frame(void) {
-	if(output_state == 0 || output_state == 2) {
+	if(output_state == OUTPUT_BUFFER1 || output_state == OUTPUT_BUFFER2) {
 		switch(output_state) {
 		case 0:
 			SPDR = buffer1.data[0];
@@ -28,7 +28,7 @@ void spi_start_frame(void) {
 
 
 ISR(SPI_STC_vect) {
-	if(output_state == 0 || output_state == 2) {
+	if(output_state == OUTPUT_BUFFER1 || output_state == OUTPUT_BUFFER2) {
 		if(output_pos < LED_COUNT*3) {
 			switch(output_state) {
 			case 0:
@@ -43,6 +43,7 @@ ISR(SPI_STC_vect) {
 			output_pos++;
 		}
 		else {
+			//Goto finished state
 			output_state++;
 		}
 	}
