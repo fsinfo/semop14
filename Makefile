@@ -9,7 +9,7 @@ OBJDIR = bin/$(AVRMCU)
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
-SIZE = avr-size
+SIZE = avr-size -C --mcu=$(AVRMCU)
 
 
 OBJ = $(SRC:%.c=$(OBJDIR)/%.o)
@@ -40,7 +40,7 @@ $(OBJDIR)/$(TARGET).hex : $(OBJDIR)/$(TARGET).elf
 
 size : $(OBJDIR)/$(TARGET).elf
 	@echo
-	@$(SIZE) $(OBJDIR)/$(TARGET).hex
+	@$(SIZE) $(OBJDIR)/$(TARGET).elf
 	@echo
 	
 clean :
