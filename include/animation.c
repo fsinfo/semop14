@@ -1,8 +1,11 @@
+
+#include <stdlib.h>
+
 #include "animation.h"
 
-/*
- *
- * */
+// Number of Animation
+// 0: Simple moving colour spectrum
+// 1: colour and brightness wave specifically built for banner LED layout
 #define ANIMATION 1
 
 #if ANIMATION == 0
@@ -23,8 +26,8 @@ void anim_frame(struct hsv_colour frame[]) {
 // Simple HSV HUE Wave
 
 // Macros for hue and value(brightness) depending on the time(t) and position(i)
-#define h(t, i) (t+i)
-#define v(t, i) (t + (i / 3))
+#define h(t, i) (t-i)
+#define v(t, i) (126 + abs(((uint8_t) (t - (i * 3))) - 127))
 
 // LED colour depending on time and pos.
 #define c(t, i) (struct hsv_colour) {h(t, i), 0xff, v(t, i)}
@@ -42,18 +45,45 @@ void anim_frame(struct hsv_colour frame[]) {
 	frame[5] = c(t, 0);
 	
 	frame[6] = c(t, 3);
-	frame[7] = c(t, 6);
-	frame[8] = c(t, 9);
-	frame[9] = c(t, 12);
+
+	frame[49] =
+	frame[48] =
+	frame[7]  = c(t, 6);
+
+	frame[47] =
+	frame[8]  = c(t, 9);
+
+	frame[46] =
+	frame[9]  = c(t, 12);
+
+	frame[45] =
 	frame[10] = c(t, 15);
+
+	frame[44] =
 	frame[11] = c(t, 18);
+
+	frame[43] =
 	frame[12] = c(t, 21);
+	
+	frame[42] =
 	frame[13] = c(t, 24);
+
+	frame[41] =
 	frame[14] = c(t, 27);
+
+	frame[40] =
 	frame[15] = c(t, 30);
+
+	frame[39] =
 	frame[16] = c(t, 33);
+
+	frame[38] =
 	frame[17] = c(t, 36);
+
+	frame[37] =
 	frame[18] = c(t, 39);
+
+	frame[36] =
 	frame[19] = c(t, 42);
 
 	frame[35] =
