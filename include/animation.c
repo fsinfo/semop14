@@ -25,15 +25,22 @@ void anim_frame(struct hsv_colour frame[]) {
 #if ANIMATION == 1
 // Simple HSV HUE Wave
 
+// larger -> slower
+#define anim_speed 5
+
 // Macros for hue and value(brightness) depending on the time(t) and position(i)
-#define h(t, i) (t-i)
-#define v(t, i) (126 + abs(((uint8_t) (t - (i * 3))) - 127))
+#define h(t, i) ((t / 32)-i)
+//#define v(t, i) (126 + abs(((uint8_t) (t - (i * 3))) - 127))
+#define v(t, i) \
+((abs((t % (128 * anim_speed)) - (64 * anim_speed))) / (anim_speed * 5)) == i / 5 \
+? 0xff \
+: 0
 
 // LED colour depending on time and pos.
 #define c(t, i) (struct hsv_colour) {h(t, i), 0xff, v(t, i)}
 
 void anim_frame(struct hsv_colour frame[]) {
-	static uint8_t t = 0; // time ticks
+	static uint16_t t = 0; // time ticks
 	
 	frame[0] = c(t, 5);
 	
@@ -109,7 +116,7 @@ void anim_frame(struct hsv_colour frame[]) {
 	frame[28] =
 	frame[29] = c(t, 63);
 	
-	t++;
+	t = (t + 1) % 8192;
 }
 #endif
 
