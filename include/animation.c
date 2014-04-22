@@ -26,7 +26,7 @@ void anim_frame(struct hsv_colour frame[]) {
 // Sweeep
 
 // larger -> slower
-#define anim_speed 5
+#define anim_speed 4
 
 // Macros for hue and value(brightness) depending on the time(t) and position(i)
 #define h(t, i) ((t / 32)-i)
